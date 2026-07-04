@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan 31 — Cuyo 2026</title>
+<style>
+  :root {
+    --amarillo: #F5C000;
+    --amarillo-soft: rgba(245,192,0,0.12);
+    --negro: #0D0D0D;
+    --gris-oscuro: #1A1A1A;
+    --gris-medio: #2C2C2C;
+    --gris-linea: #333;
+    --gris-texto: #888;
+    --blanco: #FFFFFF;
+    --verde: #22C55E;
+    --rojo: #EF4444;
+    --naranja: #F97316;
+    --r: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--negro);
+    color: var(--blanco);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--gris-oscuro);
+    border-bottom: 1px solid var(--gris-linea);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--amarillo);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .brand-text {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--amarillo);
+  }
+
+  .brand-sub {
+    font-size: 11px;
+    color: var(--gris-texto);
+    letter-spacing: 0.5px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .usuario-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gris-medio);
+    border: 1px solid var(--gris-linea);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .usuario-badge select {
+    background: transparent;
+    border: none;
+    color: var(--blanco);
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .status-chip {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid;
+  }
+
+  .status-chip.cargando { border-color: var(--amarillo); color: var(--amarillo); }
+  .status-chip.ok { border-color: var(--verde); color: var(--verde); }
+  .status-chip.error { border-color: var(--rojo); color: var(--rojo); }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    padding: 12px 24px 0;
+    border-bottom: 1px solid var(--gris-linea);
+    background: var(--gris-oscuro);
+  }
+
+  .tab {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gris-texto);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+  }
+
+  .tab:hover { color: var(--blanco); }
+  .tab.active { color: var(--amarillo); border-bottom-color: var(--amarillo); }
+
+  /* CONTENIDO */
+  .content {
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* FILTROS */
+  .filtros {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    align-items: flex-end;
+  }
+
+  .filtro-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .filtro-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gris-texto);
+  }
+
+  .filtro-grupo select,
+  .filtro-grupo input {
+    background: var(--gris-medio);
+    border: 1px solid var(--gris-linea);
+    border-radius: var(--r);
+    color: var(--blanco);
+    padding: 8px 12px;
+    font-size: 12px;
+    outline: none;
+    min-width: 140px;
+    transition: border-color 0.15s;
+  }
+
+  .filtro-grupo select:focus,
+  .filtro-grupo input:focus {
+    border-color: var(--amarillo);
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border-radius: var(--r);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-primary {
+    background: var(--amarillo);
+    color: var(--negro);
+  }
+
+  .btn-primary:hover { background: #e6b400; }
+
+  .btn-ghost {
+    background: var(--gris-medio);
+    color: var(--blanco);
+    border: 1px solid var(--gris-linea);
+  }
+
+  .btn-ghost:hover { border-color: var(--amarillo); color: var(--amarillo); }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: var(--gris-medio);
+    border: 1px solid var(--gris-linea);
+    border-radius: var(--r);
+    padding: 12px 16px;
+    min-width: 120px;
+  }
+
+  .stat-val {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--amarillo);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--gris-texto);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* GRID DE FOTOS */
+  .foto-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .foto-card {
+    background: var(--gris-oscuro);
+    border: 1px solid var(--gris-linea);
+    border-radius: var(--r);
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+
+  .foto-card.validado-ok { border-color: var(--verde); }
+  .foto-card.validado-nook { border-color: var(--rojo); }
+
+  .foto-img-wrap {
+    position: relative;
+    aspect-ratio: 4/3;
+    background: #111;
+    cursor: pointer;
+  }
+
+  .foto-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .foto-img-wrap .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s;
+    font-size: 32px;
+  }
+
+  .foto-img-wrap:hover .overlay { opacity: 1; }
+
+  .foto-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+
+  .foto-badge.ok { background: var(--verde); color: #fff; }
+  .foto-badge.nook { background: var(--rojo); color: #fff; }
+  .foto-badge.pendiente { background: rgba(255,255,255,0.15); color: #fff; }
+
+  .foto-info {
+    padding: 12px;
+  }
+
+  .foto-promotor {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .foto-meta {
+    font-size: 11px;
+    color: var(--gris-texto);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .foto-variable {
+    font-size: 11px;
+    background: var(--amarillo-soft);
+    color: var(--amarillo);
+    border: 1px solid rgba(245,192,0,0.25);
+    border-radius: 6px;
+    padding: 3px 8px;
+    display: inline-block;
+    margin-bottom: 10px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .foto-acciones {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-ok, .btn-nook {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid;
+    transition: all 0.15s;
+  }
+
+  .btn-ok {
+    border-color: var(--verde);
+    color: var(--verde);
+    background: transparent;
+  }
+
+  .btn-ok:hover, .btn-ok.activo {
+    background: var(--verde);
+    color: #fff;
+  }
+
+  .btn-nook {
+    border-color: var(--rojo);
+    color: var(--rojo);
+    background: transparent;
+  }
+
+  .btn-nook:hover, .btn-nook.activo {
+    background: var(--rojo);
+    color: #fff;
+  }
+
+  /* MODAL FOTO */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    display: none;
+  }
+
+  .modal.open { display: flex; }
+
+  .modal-inner {
+    max-width: 900px;
+    width: 100%;
+    background: var(--gris-oscuro);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--gris-linea);
+  }
+
+  .modal-img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    background: #000;
+    display: block;
+  }
+
+  .modal-footer {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .modal-info {
+    font-size: 13px;
+    color: var(--gris-texto);
+    line-height: 1.5;
+  }
+
+  .modal-info strong { color: var(--blanco); }
+
+  .modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* RANKING */
+  .ranking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .ranking-titulo {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+  }
+
+  .ranking-nota {
+    font-size: 12px;
+    color: var(--gris-texto);
+    margin-top: 2px;
+  }
+
+  .tabla-ranking {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .tabla-ranking th {
+    text-align: left;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gris-texto);
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--gris-linea);
+    white-space: nowrap;
+  }
+
+  .tabla-ranking td {
+    padding: 12px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(51,51,51,0.5);
+  }
+
+  .tabla-ranking tr:hover td {
+    background: rgba(255,255,255,0.02);
+  }
+
+  .rank-pos {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--amarillo);
+    width: 40px;
+  }
+
+  .rank-pos.top1 { color: #FFD700; }
+  .rank-pos.top2 { color: #C0C0C0; }
+  .rank-pos.top3 { color: #CD7F32; }
+
+  .rank-nombre {
+    font-weight: 700;
+  }
+
+  .rank-dist {
+    font-size: 11px;
+    color: var(--gris-texto);
+    margin-top: 2px;
+  }
+
+  .score-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .score-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--gris-medio);
+    border-radius: 999px;
+    overflow: hidden;
+    min-width: 80px;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--amarillo);
+    transition: width 0.3s ease;
+  }
+
+  .score-val {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--amarillo);
+    min-width: 48px;
+    text-align: right;
+  }
+
+  .bloque-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .bloque-chip {
+    font-size: 10px;
+    padding: 3px 7px;
+    border-radius: 6px;
+    background: var(--gris-medio);
+    border: 1px solid var(--gris-linea);
+    color: var(--gris-texto);
+  }
+
+  .bloque-chip span {
+    color: var(--blanco);
+    font-weight: 700;
+  }
+
+  .pdvs-count {
+    font-size: 11px;
+    color: var(--gris-texto);
+    white-space: nowrap;
+  }
+
+  /* CONFIGURACION */
+  .config-section {
+    background: var(--gris-oscuro);
+    border: 1px solid var(--gris-linea);
+    border-radius: var(--r);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .config-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--amarillo);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .config-field {
+    margin-bottom: 12px;
+  }
+
+  .config-field label {
+    display: block;
+    font-size: 11px;
+    color: var(--gris-texto);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .config-field input {
+    width: 100%;
+    background: var(--gris-medio);
+    border: 1px solid var(--gris-linea);
+    border-radius: 8px;
+    color: var(--blanco);
+    padding: 10px 12px;
+    font-size: 13px;
+    outline: none;
+    font-family: monospace;
+  }
+
+  .config-field input:focus {
+    border-color: var(--amarillo);
+  }
+
+  .config-hint {
+    font-size: 11px;
+    color: var(--gris-texto);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .steps {
+    counter-reset: step;
+  }
+
+  .step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    counter-increment: step;
+    width: 24px;
+    height: 24px;
+    background: var(--amarillo);
+    color: var(--negro);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-text {
+    font-size: 13px;
+    color: var(--gris-texto);
+    line-height: 1.6;
+    padding-top: 2px;
+  }
+
+  .step-text code {
+    background: rgba(255,255,255,0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--amarillo);
+    font-family: monospace;
+  }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gris-texto);
+  }
+
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-title { font-size: 16px; font-weight: 700; color: var(--blanco); margin-bottom: 6px; }
+  .empty-sub { font-size: 13px; }
+
+  /* LOADING */
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px;
+    color: var(--gris-texto);
+    font-size: 13px;
+  }
+
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--gris-linea);
+    border-top-color: var(--amarillo);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* CANAL TAG */
+  .canal-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .canal-kt { background: rgba(99,102,241,0.2); color: #818CF8; border: 1px solid rgba(99,102,241,0.3); }
+  .canal-as { background: rgba(20,184,166,0.2); color: #2DD4BF; border: 1px solid rgba(20,184,166,0.3); }
+
+  .progress-text {
+    font-size: 12px;
+    color: var(--gris-texto);
+    margin-bottom: 16px;
+  }
+
+  .progress-text strong { color: var(--verde); }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <div>
+      <div class="brand-text">Plan 31 · Cuyo 2026</div>
+      <div class="brand-sub">Validación & Ranking de Ejecución</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="usuario-badge">
+      👤
+      <select id="selectUsuario">
+        <option value="">Seleccioná quién validás</option>
+        <option>Cabra</option>
+        <option>Lider 1</option>
+        <option>Lider 2</option>
+        <option>Lider 3</option>
+      </select>
+    </div>
+    <div id="statusChip" class="status-chip cargando">● Sin datos</div>
+    <button class="btn btn-primary" onclick="cargarDatos()">↻ Actualizar</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="cambiarTab('validacion', this)">📷 Validación</div>
+  <div class="tab" onclick="cambiarTab('ranking', this)">🏆 Ranking</div>
+  <div class="tab" onclick="cambiarTab('config', this)">⚙ Configuración</div>
+</div>
+
+<!-- CONTENIDO -->
+<div class="content">
+
+  <!-- PANEL VALIDACIÓN -->
+  <div id="panel-validacion" class="panel active">
+
+    <div class="filtros">
+      <div class="filtro-grupo">
+        <div class="filtro-label">Canal</div>
+        <select id="filtroCanal" onchange="filtrar()">
+          <option value="">Todos</option>
+          <option value="K+T">K+T</option>
+          <option value="AS">AS</option>
+        </select>
+      </div>
+      <div class="filtro-grupo">
+        <div class="filtro-label">Promotor</div>
+        <select id="filtroPromotor" onchange="filtrar()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+      <div class="filtro-grupo">
+        <div class="filtro-label">Distribuidor</div>
+        <select id="filtroDistribuidor" onchange="filtrar()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+      <div class="filtro-grupo">
+        <div class="filtro-label">Bloque</div>
+        <select id="filtroBloque" onchange="filtrar()">
+          <option value="">Todos</option>
+          <option>FRIO CMQ</option>
+          <option>FRIO BLANCO</option>
+          <option>ZONA EXTERNA</option>
+          <option>EXHIB. ADICIONALES</option>
+          <option>GONDOLA</option>
+        </select>
+      </div>
+      <div class="filtro-grupo">
+        <div class="filtro-label">Estado</div>
+        <select id="filtroEstado" onchange="filtrar()">
+          <option value="">Todos</option>
+          <option value="pendiente">Pendientes</option>
+          <option value="ok">Validados OK</option>
+          <option value="nook">Invalidados</option>
+        </select>
+      </div>
+      <button class="btn btn-ghost" onclick="limpiarFiltros()">Limpiar</button>
+    </div>
+
+    <div class="stats-bar" id="statsBar">
+      <div class="stat-card"><div class="stat-val" id="statTotal">—</div><div class="stat-label">Fotos totales</div></div>
+      <div class="stat-card"><div class="stat-val" id="statPendiente">—</div><div class="stat-label">Pendientes</div></div>
+      <div class="stat-card"><div class="stat-val" id="statOK" style="color:var(--verde)">—</div><div class="stat-label">Validadas OK</div></div>
+      <div class="stat-card"><div class="stat-val" id="statNOOK" style="color:var(--rojo)">—</div><div class="stat-label">Invalidadas</div></div>
+    </div>
+
+    <div id="fotoGrid" class="foto-grid">
+      <div class="empty">
+        <div class="empty-icon">📷</div>
+        <div class="empty-title">Sin datos cargados</div>
+        <div class="empty-sub">Configurá el Apps Script y hacé click en Actualizar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL RANKING -->
+  <div id="panel-ranking" class="panel">
+    <div class="ranking-header">
+      <div>
+        <div class="ranking-titulo">Ranking de Promotores</div>
+        <div class="ranking-nota">Basado únicamente en fotos validadas · ponderado por pesos H2</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="filtro-grupo">
+          <div class="filtro-label">Canal</div>
+          <select id="rankCanal" onchange="renderRanking()">
+            <option value="">Todos</option>
+            <option value="K+T">K+T</option>
+            <option value="AS">AS</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="renderRanking()">↻ Recalcular</button>
+      </div>
+    </div>
+    <div id="rankingContainer">
+      <div class="empty">
+        <div class="empty-icon">🏆</div>
+        <div class="empty-title">Sin validaciones aún</div>
+        <div class="empty-sub">Validá fotos en la pestaña anterior para ver el ranking</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL CONFIG -->
+  <div id="panel-config" class="panel">
+
+    <div class="config-section">
+      <div class="config-title">Paso 1 — Configurá el Apps Script</div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text">Abrí el <strong>Sheet de Validaciones</strong> → <code>Extensiones</code> → <code>Apps Script</code></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">Borrá todo el contenido que hay y pegá el código del archivo <code>apps_script.js</code> que te pasé</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Guardá con <code>Ctrl+S</code> → <code>Implementar</code> → <code>Nueva implementación</code></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">Tipo: <code>Aplicación web</code> · Ejecutar como: <code>Yo</code> · Acceso: <code>Cualquier usuario</code></div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-text">Copiá la URL que te genera y pegala abajo</div></div>
+      </div>
+    </div>
+
+    <div class="config-section">
+      <div class="config-title">Paso 2 — URLs de conexión</div>
+
+      <div class="config-field">
+        <label>URL del Apps Script (Web App)</label>
+        <input type="text" id="cfgWebApp" placeholder="https://script.google.com/macros/s/..." oninput="guardarConfig()">
+        <div class="config-hint">La URL que te da Google al publicar el Apps Script como Web App</div>
+      </div>
+
+      <div class="config-field">
+        <label>Sheet ID — Respuestas Tally</label>
+        <input type="text" id="cfgSheetTally" value="1hOrbUasWCLWYWcTpyM6-szBl5rBzWiZo5VDk4uN_tw0" oninput="guardarConfig()">
+        <div class="config-hint">Ya está cargado. Solo cambialo si cambia el Sheet.</div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <button class="btn btn-primary" onclick="cargarDatos()">Probar conexión</button>
+      </div>
+    </div>
+
+    <div class="config-section">
+      <div class="config-title">Validadores habilitados</div>
+      <div class="config-field">
+        <label>Nombres (uno por línea)</label>
+        <textarea id="cfgValidadores" rows="5" style="width:100%;background:var(--gris-medio);border:1px solid var(--gris-linea);border-radius:8px;color:var(--blanco);padding:10px 12px;font-size:13px;resize:vertical;outline:none;" oninput="guardarConfig();actualizarValidadores()">Cabra
+Lider 1
+Lider 2
+Lider 3</textarea>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MODAL FOTO AMPLIADA -->
+<div class="modal" id="modal" onclick="cerrarModal(event)">
+  <button class="modal-close" onclick="cerrarModal()">✕</button>
+  <div class="modal-inner">
+    <img class="modal-img" id="modalImg" src="" alt="">
+    <div class="modal-footer">
+      <div class="modal-info" id="modalInfo"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-ok" id="modalBtnOK" onclick="validarDesdeModal('OK')">✅ OK</button>
+        <button class="btn-nook" id="modalBtnNOOK" onclick="validarDesdeModal('NO OK')">❌ NO OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================
+// CONFIGURACIÓN Y PESOS H2
+// =============================================
+
+const PESOS = {
+  "K+T": {
+    bloques: {
+      "FRIO CMQ": {
+        peso: 0.50,
+        variables: {
+          "¿Tenes el EDF CVZA CMQ en primera posición?": 0.40,
+          "¿El EDF de CVZA tiene Sticker con menú de precios y cumple con los criterios de planograma?": 0.15,
+          "¿Estas 3 a 1 en el Superclasico entre Quilmes/Andes vs Schneider en los 3 calibres?": 0.15,
+          "¿Estas 3 a 1 en la Champion entre Stella vs Heineken en los 3 calibres?": 0.15,
+          "¿Tenes algun SKU de MICHELOB y de las marcas 0.0?": 0.15,
+        }
+      },
+      "FRIO BLANCO": {
+        peso: 0.25,
+        variables: {
+          "¿Estas 3 a 1 en la batalla value en los 3 calibres?": 0.70,
+          "¿Conquistaste el espacio con tu linea de H2OH?": 0.30,
+        }
+      },
+      "ZONA EXTERNA": {
+        peso: 0.05,
+        variables: {
+          "¿Estas 3 a 1 vs Competencia de POP EXTERNO?": 1.0,
+        }
+      },
+      "EXHIB. ADICIONALES": {
+        peso: 0.20,
+        variables: {
+          "¿EL PDV tiene 3 a 1 en exhibiciones adicionales vs Competencia?": 0.60,
+          "¿El PDV tiene al menos 1 Combo Ocasión/oportunidad de CVZA correctamente precificada?": 0.25,
+          "¿El PDV tiene al menos 1 Combo Ocasión/oportunidad de NABS correctamente precificada?": 0.15,
+        }
+      }
+    }
+  },
+  "AS": {
+    bloques: {
+      "FRIO CMQ": {
+        peso: 0.40,
+        variables: {
+          "¿Tenes el EDF CVZA CMQ en primera posición?": 0.40,
+          "¿El EDF de CVZA tiene Sticker con menú de precios y cumple con los criterios de planograma?": 0.15,
+          "¿Estas 3 a 1 en el Superclasico entre Quilmes/Andes vs Schneider en los 3 calibres?": 0.15,
+          "¿Estas 3 a 1 en la Champion entre Stella vs Heineken en los 3 calibres?": 0.15,
+          "¿Tenes algun SKU de MICHELOB y de las marcas 0.0?": 0.15,
+        }
+      },
+      "FRIO BLANCO": {
+        peso: 0.20,
+        variables: {
+          "¿Estas 3 a 1 en la batalla value en los 3 calibres?": 0.70,
+          "¿Conquistaste el espacio con tu linea de H2OH?": 0.30,
+        }
+      },
+      "ZONA EXTERNA": {
+        peso: 0.05,
+        variables: {
+          "¿Estas 3 a 1 vs Competencia de POP EXTERNO?": 1.0,
+        }
+      },
+      "EXHIB. ADICIONALES": {
+        peso: 0.25,
+        variables: {
+          "¿EL PDV tiene 3 a 1 en exhibiciones adicionales vs Competencia?": 0.60,
+          "¿El PDV tiene al menos 1 Combo Ocasión/oportunidad de CVZA correctamente precificada?": 0.25,
+          "¿El PDV tiene al menos 1 Combo Ocasión/oportunidad de NABS correctamente precificada?": 0.15,
+        }
+      },
+      "GONDOLA": {
+        peso: 0.10,
+        variables: {
+          "¿Tenes al menos el 75% de Facing Share de góndola de CVZA?": 0.60,
+          "¿Tenes bien ejecutado los precios en cenefas con el PTC correctamente?": 0.10,
+          "¿Tenes al menos el 35% de Facing Share de góndola de NABS?": 0.30,
+        }
+      }
+    }
+  }
+};
+
+// Mapeo columnas Tally → variable + bloque
+const MAPA_VARIABLES = [
+  // K+T
+  { col: "b) TENES TUS EDF DE CERVEZA EN PRIMERA POSICIÓN?", bloque: "FRIO CMQ", variable: "¿Tenes el EDF CVZA CMQ en primera posición?", canal: "K+T" },
+  { col: "Tus EDF cumplen con los Criterios de Planograma?", bloque: "FRIO CMQ", variable: "¿El EDF de CVZA tiene Sticker con menú de precios y cumple con los criterios de planograma?", canal: "K+T" },
+  { col: "¿Estas 3 a 1 en El Superclasico entre Quilmes/Andes vs Schneider en los 3 calibres? *Siendo Laton 710 el mas importante de los 3", bloque: "FRIO CMQ", variable: "¿Estas 3 a 1 en el Superclasico entre Quilmes/Andes vs Schneider en los 3 calibres?", canal: "K+T" },
+  { col: "¿Estas 3 a 1 en La Champion entre Stella vs Heineken en los 3 calibres? *Siendo Laton el mas importante de los 3", bloque: "FRIO CMQ", variable: "¿Estas 3 a 1 en la Champion entre Stella vs Heineken en los 3 calibres?", canal: "K+T" },
+  { col: "¿Tenes al menos 1 SKU de MICHELOB y de las marcas 0.0?", bloque: "FRIO CMQ", variable: "¿Tenes algun SKU de MICHELOB y de las marcas 0.0?", canal: "K+T" },
+  { col: "b) BATALLA VALUE: ¿ESTAS 3 A 1 EN FRENTES CON TUS SKU VALUE? ", bloque: "FRIO BLANCO", variable: "¿Estas 3 a 1 en la batalla value en los 3 calibres?", canal: "K+T" },
+  { col: "c) BATALLA SABORIZADAS: ¿LOGRASTE POSICIONARTE CON TU LINEA DE H2OH? ", bloque: "FRIO BLANCO", variable: "¿Conquistaste el espacio con tu linea de H2OH?", canal: "K+T" },
+  { col: "b) ¿ESTAS 3 A 1 EN AFICHES EXTERNO? ", bloque: "ZONA EXTERNA", variable: "¿Estas 3 a 1 vs Competencia de POP EXTERNO?", canal: "K+T" },
+  { col: "a) CÓMO ESTAS EN ADICIONALES: [¿EL PDV tiene 3 a 1 en exhibiciones adicionales vs Competencia?]", bloque: "EXHIB. ADICIONALES", variable: "¿EL PDV tiene 3 a 1 en exhibiciones adicionales vs Competencia?", canal: "K+T" },
+  { col: "a) CÓMO ESTAS EN ADICIONALES: [¿Tenes al menos 1 Combo Ocasión/oportunidad de CVZA correctamente precificada?]", bloque: "EXHIB. ADICIONALES", variable: "¿El PDV tiene al menos 1 Combo Ocasión/oportunidad de CVZA correctamente precificada?", canal: "K+T" },
+  { col: "a) CÓMO ESTAS EN ADICIONALES: [¿Tenes al menos 1 Combo Ocasión/oportunidad de NABS correctamente precificada?]", bloque: "EXHIB. ADICIONALES", variable: "¿El PDV tiene al menos 1 Combo Ocasión/oportunidad de NABS correctamente precificada?", canal: "K+T" },
+  // AS - reutiliza columnas con distinto prefijo
+  { col: "b) TENES TUS EDF DE CERVEZA EN PRIMERA POSICIÓN?_AS", bloque: "FRIO CMQ", variable: "¿Tenes el EDF CVZA CMQ en primera posición?", canal: "AS" },
+  { col: "¿Tus EDF cumplen con los Criterios de Planograma?", bloque: "FRIO CMQ", variable: "¿El EDF de CVZA tiene Sticker con menú de precios y cumple con los criterios de planograma?", canal: "AS" },
+  { col: "b) BATALLA VALUE: ¿ESTAS 3 A 1 EN FRENTES CON TUS SKU VALUE DE CERVEZA? ", bloque: "FRIO BLANCO", variable: "¿Estas 3 a 1 en la batalla value en los 3 calibres?", canal: "AS" },
+];
+
+// =============================================
+// ESTADO GLOBAL
+// =============================================
+let rawRows = [];
+let fotoItems = [];
+let validaciones = {};  // key: submissionId+variable → { validacion, validadoPor }
+let modalItem = null;
+
+const SHEET_ID_TALLY = "1hOrbUasWCLWYWcTpyM6-szBl5rBzWiZo5VDk4uN_tw0";
+
+// =============================================
+// CONFIG (localStorage)
+// =============================================
+function guardarConfig() {
+  localStorage.setItem('p31_webapp', document.getElementById('cfgWebApp').value);
+  localStorage.setItem('p31_validadores', document.getElementById('cfgValidadores').value);
+}
+
+function cargarConfig() {
+  const wa = localStorage.getItem('p31_webapp') || '';
+  const v = localStorage.getItem('p31_validadores') || 'Cabra\nLider 1\nLider 2\nLider 3';
+  document.getElementById('cfgWebApp').value = wa;
+  document.getElementById('cfgValidadores').value = v;
+  actualizarValidadores();
+}
+
+function actualizarValidadores() {
+  const sel = document.getElementById('selectUsuario');
+  const val = sel.value;
+  const lista = document.getElementById('cfgValidadores').value
+    .split('\n').map(x => x.trim()).filter(Boolean);
+  sel.innerHTML = '<option value="">Seleccioná quién validás</option>';
+  lista.forEach(n => {
+    const o = document.createElement('option');
+    o.value = n; o.textContent = n;
+    if (n === val) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+// =============================================
+// CARGA DE DATOS
+// =============================================
+function setStatus(txt, tipo) {
+  const c = document.getElementById('statusChip');
+  c.textContent = `● ${txt}`;
+  c.className = `status-chip ${tipo}`;
+}
+
+async function cargarDatos() {
+  setStatus('Cargando...', 'cargando');
+  try {
+    await Promise.all([cargarTally(), cargarValidaciones()]);
+    construirFotos();
+    filtrar();
+    setStatus('Actualizado', 'ok');
+  } catch(e) {
+    setStatus('Error de conexión', 'error');
+    console.error(e);
+  }
+}
+
+async function cargarTally() {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID_TALLY}/export?format=csv&gid=0`;
+  const resp = await fetch(url);
+  const txt = await resp.text();
+  rawRows = parseCSV(txt);
+}
+
+async function cargarValidaciones() {
+  const webApp = localStorage.getItem('p31_webapp');
+  if (!webApp) return;
+  try {
+    const resp = await fetch(webApp);
+    const data = await resp.json();
+    validaciones = {};
+    (data.validaciones || []).forEach(v => {
+      const key = `${v['Submission ID']}__${v['Variable']}`;
+      // Última validación gana
+      validaciones[key] = {
+        validacion: v['Validacion'],
+        validadoPor: v['Validado Por']
+      };
+    });
+  } catch(e) {
+    console.warn('No se pudieron cargar validaciones', e);
+  }
+}
+
+// =============================================
+// CONSTRUCCIÓN DE FOTO ITEMS
+// =============================================
+function construirFotos() {
+  fotoItems = [];
+  
+  rawRows.forEach(row => {
+    const submissionId = row['Submission ID'] || '';
+    const promotor = row['NOMBRE Y APELLIDO:'] || '';
+    const distribuidor = row['DISTRIBUIDOR:'] || '';
+    const canal = (row['QUE TIPO DE NEGOCIO ES:'] || '').toUpperCase().includes('AS') ? 'AS' : 'K+T';
+    const codigoB2B = row['CODIGO B2B DEL PDV:'] || '';
+
+    // Extraer fotos del row
+    // Las fotos vienen en columnas "FOTOS BLOQUE FRIO:", "FOTOS FRIO BLANCO:", "FOTOS EXHIBICIONES:"
+    const colsFotos = Object.keys(row).filter(k => 
+      k.toUpperCase().includes('FOTO') || k.toUpperCase().includes('IMAGEN')
+    );
+    
+    // También buscar URLs directas en las columnas de respuesta
+    Object.keys(row).forEach(col => {
+      const val = (row[col] || '').toString();
+      // Buscar URLs de fotos (tally storage o cualquier imagen)
+      const urls = val.match(/https?:\/\/[^\s]+\.(jpg|jpeg|png|webp)[^\s]*/gi) || [];
+      // También URLs de storage.tally.so
+      const tallyUrls = val.match(/https?:\/\/storage\.tally\.so[^\s]*/gi) || [];
+      
+      [...new Set([...urls, ...tallyUrls])].forEach(fotoUrl => {
+        // Determinar variable y bloque según la columna
+        const mapeo = MAPA_VARIABLES.find(m => col.includes(m.col.substring(0,30)));
+        
+        fotoItems.push({
+          submissionId,
+          promotor: promotor.trim(),
+          distribuidor,
+          canal,
+          codigoB2B,
+          bloque: mapeo?.bloque || 'SIN BLOQUE',
+          variable: mapeo?.variable || col.substring(0, 60),
+          respuestaPromotor: 'SI',
+          fotoUrl,
+          colOrigen: col,
+        });
+      });
+    });
+  });
+
+  // Dedup por URL
+  const seen = new Set();
+  fotoItems = fotoItems.filter(f => {
+    if (seen.has(f.fotoUrl)) return false;
+    seen.add(f.fotoUrl);
+    return true;
+  });
+
+  // Poblar filtros
+  poblarFiltros();
+}
+
+function poblarFiltros() {
+  const promotores = [...new Set(fotoItems.map(f => f.promotor).filter(Boolean))].sort();
+  const distribuidores = [...new Set(fotoItems.map(f => f.distribuidor).filter(Boolean))].sort();
+  
+  const selP = document.getElementById('filtroPromotor');
+  const selD = document.getElementById('filtroDistribuidor');
+  
+  selP.innerHTML = '<option value="">Todos</option>';
+  promotores.forEach(p => selP.innerHTML += `<option>${p}</option>`);
+  
+  selD.innerHTML = '<option value="">Todos</option>';
+  distribuidores.forEach(d => selD.innerHTML += `<option>${d}</option>`);
+}
+
+// =============================================
+// FILTROS Y RENDER
+// =============================================
+function limpiarFiltros() {
+  ['filtroCanal','filtroPromotor','filtroDistribuidor','filtroBloque','filtroEstado']
+    .forEach(id => document.getElementById(id).value = '');
+  filtrar();
+}
+
+function getValidacion(item) {
+  const key = `${item.submissionId}__${item.variable}`;
+  return validaciones[key] || null;
+}
+
+function filtrar() {
+  const canal = document.getElementById('filtroCanal').value;
+  const promotor = document.getElementById('filtroPromotor').value;
+  const dist = document.getElementById('filtroDistribuidor').value;
+  const bloque = document.getElementById('filtroBloque').value;
+  const estado = document.getElementById('filtroEstado').value;
+
+  let items = fotoItems.filter(f => {
+    if (canal && f.canal !== canal) return false;
+    if (promotor && f.promotor !== promotor) return false;
+    if (dist && f.distribuidor !== dist) return false;
+    if (bloque && f.bloque !== bloque) return false;
+    if (estado) {
+      const v = getValidacion(f);
+      if (estado === 'pendiente' && v) return false;
+      if (estado === 'ok' && (!v || v.validacion !== 'OK')) return false;
+      if (estado === 'nook' && (!v || v.validacion !== 'NO OK')) return false;
+    }
+    return true;
+  });
+
+  renderFotos(items);
+  actualizarStats();
+}
+
+function actualizarStats() {
+  const total = fotoItems.length;
+  const ok = fotoItems.filter(f => { const v = getValidacion(f); return v && v.validacion === 'OK'; }).length;
+  const nook = fotoItems.filter(f => { const v = getValidacion(f); return v && v.validacion === 'NO OK'; }).length;
+  const pend = total - ok - nook;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statPendiente').textContent = pend;
+  document.getElementById('statOK').textContent = ok;
+  document.getElementById('statNOOK').textContent = nook;
+}
+
+function renderFotos(items) {
+  const grid = document.getElementById('fotoGrid');
+  
+  if (!items.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">Sin resultados</div>
+      <div class="empty-sub">Probá cambiando los filtros</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = items.slice(0, 200).map((f, i) => {
+    const v = getValidacion(f);
+    const claseCard = v ? (v.validacion === 'OK' ? 'validado-ok' : 'validado-nook') : '';
+    const badge = v 
+      ? `<div class="foto-badge ${v.validacion === 'OK' ? 'ok' : 'nook'}">${v.validacion}</div>`
+      : `<div class="foto-badge pendiente">Pendiente</div>`;
+    
+    const canalTag = f.canal === 'AS' 
+      ? `<span class="canal-tag canal-as">AS</span>`
+      : `<span class="canal-tag canal-kt">K+T</span>`;
+
+    return `<div class="foto-card ${claseCard}" id="card-${i}">
+      <div class="foto-img-wrap" onclick="abrirModal(${i}, ${JSON.stringify(items).indexOf(JSON.stringify(f)) > -1 ? i : 0})">
+        <img src="${f.fotoUrl}" alt="foto" loading="lazy" onerror="this.src='';this.parentElement.style.background='#222';this.remove()">
+        ${badge}
+        <div class="overlay">🔍</div>
+      </div>
+      <div class="foto-info">
+        <div class="foto-promotor">${f.promotor || 'Sin nombre'} ${canalTag}</div>
+        <div class="foto-meta">${f.distribuidor || ''} · PDV ${f.codigoB2B || '—'}</div>
+        <div class="foto-variable" title="${f.variable}">${f.bloque} · ${f.variable.substring(0,50)}${f.variable.length > 50 ? '...' : ''}</div>
+        <div class="foto-acciones">
+          <button class="btn-ok ${v && v.validacion === 'OK' ? 'activo' : ''}" onclick="validar(${i}, 'OK', event)">✅ OK</button>
+          <button class="btn-nook ${v && v.validacion === 'NO OK' ? 'activo' : ''}" onclick="validar(${i}, 'NO OK', event)">❌ NO OK</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Guardar items filtrados para acceder desde modal
+  window._itemsFiltrados = items;
+  
+  if (items.length > 200) {
+    grid.innerHTML += `<div class="empty" style="grid-column:1/-1;padding:20px">
+      <div style="font-size:13px;color:var(--gris-texto)">Mostrando 200 de ${items.length} fotos. Usá filtros para acotar.</div>
+    </div>`;
+  }
+}
+
+// =============================================
+// VALIDACIÓN
+// =============================================
+async function validar(idx, resultado, evt) {
+  if (evt) evt.stopPropagation();
+  
+  const usuario = document.getElementById('selectUsuario').value;
+  if (!usuario) {
+    alert('Primero seleccioná quién sos (arriba a la derecha)');
+    return;
+  }
+
+  const items = window._itemsFiltrados || fotoItems;
+  const item = items[idx];
+  if (!item) return;
+
+  const key = `${item.submissionId}__${item.variable}`;
+  validaciones[key] = { validacion: resultado, validadoPor: usuario };
+
+  // Actualizar UI inmediatamente
+  filtrar();
+
+  // Guardar en Sheet
+  const webApp = localStorage.getItem('p31_webapp');
+  if (webApp) {
+    try {
+      await fetch(webApp, {
+        method: 'POST',
+        body: JSON.stringify({
+          submissionId: item.submissionId,
+          promotor: item.promotor,
+          distribuidor: item.distribuidor,
+          codigoB2B: item.codigoB2B,
+          canal: item.canal,
+          variable: item.variable,
+          bloque: item.bloque,
+          respuestaPromotor: item.respuestaPromotor,
+          validacion: resultado,
+          validadoPor: usuario,
+          fotoUrl: item.fotoUrl,
+        })
+      });
+    } catch(e) {
+      console.warn('No se pudo guardar en Sheet', e);
+    }
+  }
+}
+
+// =============================================
+// MODAL
+// =============================================
+function abrirModal(idx) {
+  const items = window._itemsFiltrados || fotoItems;
+  modalItem = { item: items[idx], idx };
+  
+  const f = items[idx];
+  document.getElementById('modalImg').src = f.fotoUrl;
+  
+  const v = getValidacion(f);
+  document.getElementById('modalInfo').innerHTML = `
+    <strong>${f.promotor}</strong> · ${f.distribuidor}<br>
+    PDV ${f.codigoB2B} · ${f.canal} · ${f.bloque}<br>
+    <small style="color:var(--amarillo)">${f.variable}</small>
+    ${v ? `<br><small>Validado: <strong>${v.validacion}</strong> por ${v.validadoPor}</small>` : ''}
+  `;
+  
+  document.getElementById('modal').classList.add('open');
+}
+
+function cerrarModal(evt) {
+  if (evt && evt.target !== document.getElementById('modal') && 
+      !evt.target.classList.contains('modal-close')) return;
+  document.getElementById('modal').classList.remove('open');
+  modalItem = null;
+}
+
+async function validarDesdeModal(resultado) {
+  if (!modalItem) return;
+  await validar(modalItem.idx, resultado);
+  cerrarModal();
+}
+
+// =============================================
+// RANKING
+// =============================================
+function renderRanking() {
+  const canalFiltro = document.getElementById('rankCanal').value;
+  
+  // Agrupar validaciones por promotor
+  const porPromotor = {};
+  
+  fotoItems.forEach(f => {
+    const v = getValidacion(f);
+    if (!v) return; // Solo validadas
+    
+    if (canalFiltro && f.canal !== canalFiltro) return;
+    
+    const key = f.promotor;
+    if (!porPromotor[key]) {
+      porPromotor[key] = {
+        promotor: f.promotor,
+        distribuidor: f.distribuidor,
+        pdvs: new Set(),
+        porCanalBloque: {},
+      };
+    }
+    
+    porPromotor[key].pdvs.add(f.codigoB2B);
+    
+    const canalKey = f.canal;
+    if (!porPromotor[key].porCanalBloque[canalKey]) {
+      porPromotor[key].porCanalBloque[canalKey] = {};
+    }
+    if (!porPromotor[key].porCanalBloque[canalKey][f.bloque]) {
+      porPromotor[key].porCanalBloque[canalKey][f.bloque] = { ok: 0, total: 0, variables: {} };
+    }
+    
+    const b = porPromotor[key].porCanalBloque[canalKey][f.bloque];
+    if (!b.variables[f.variable]) b.variables[f.variable] = { ok: 0, total: 0 };
+    
+    b.variables[f.variable].total++;
+    b.total++;
+    if (v.validacion === 'OK') {
+      b.variables[f.variable].ok++;
+      b.ok++;
+    }
+  });
+
+  // Calcular score ponderado
+  const resultados = Object.values(porPromotor).map(p => {
+    let scoreFinal = 0;
+    let bloqueDetalle = {};
+    let totalCanales = 0;
+
+    Object.entries(p.porCanalBloque).forEach(([canal, bloques]) => {
+      const pesosCanal = PESOS[canal]?.bloques || {};
+      let scoreCanal = 0;
+
+      Object.entries(bloques).forEach(([bloque, data]) => {
+        const pesoBloque = pesosCanal[bloque]?.peso || 0;
+        const pesosVariables = pesosCanal[bloque]?.variables || {};
+        
+        let scoreBloque = 0;
+        Object.entries(data.variables).forEach(([varNombre, vData]) => {
+          const pesoVar = pesosVariables[varNombre] || 0;
+          const alcance = vData.total > 0 ? vData.ok / vData.total : 0;
+          scoreBloque += alcance * pesoVar;
+        });
+
+        scoreCanal += scoreBloque * pesoBloque;
+        
+        if (!bloqueDetalle[bloque]) bloqueDetalle[bloque] = { score: 0, count: 0 };
+        bloqueDetalle[bloque].score += scoreBloque;
+        bloqueDetalle[bloque].count++;
+      });
+
+      scoreFinal += scoreCanal;
+      totalCanales++;
+    });
+
+    if (totalCanales > 1) scoreFinal /= totalCanales;
+
+    return {
+      promotor: p.promotor,
+      distribuidor: p.distribuidor,
+      pdvs: p.pdvs.size,
+      score: scoreFinal,
+      bloques: bloqueDetalle,
+    };
+  });
+
+  resultados.sort((a, b) => b.score - a.score);
+
+  if (!resultados.length) {
+    document.getElementById('rankingContainer').innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🏆</div>
+        <div class="empty-title">Sin validaciones aún</div>
+        <div class="empty-sub">Validá fotos en la pestaña anterior para ver el ranking</div>
+      </div>`;
+    return;
+  }
+
+  const html = `<table class="tabla-ranking">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Promotor</th>
+        <th>Puntaje Final</th>
+        <th>Por Bloque</th>
+        <th>PDVs</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${resultados.map((r, i) => {
+        const pos = i + 1;
+        const clasePos = pos === 1 ? 'top1' : pos === 2 ? 'top2' : pos === 3 ? 'top3' : '';
+        const pct = Math.round(r.score * 100);
+        const color = pct >= 70 ? 'var(--verde)' : pct >= 40 ? 'var(--amarillo)' : 'var(--rojo)';
+        
+        const chips = Object.entries(r.bloques).map(([b, d]) => {
+          const s = Math.round((d.score / Math.max(d.count, 1)) * 100);
+          return `<div class="bloque-chip">${b.replace('EXHIB. ADICIONALES','EXHIB').replace('ZONA EXTERNA','EXT')}: <span>${s}%</span></div>`;
+        }).join('');
+
+        return `<tr>
+          <td><div class="rank-pos ${clasePos}">${pos}</div></td>
+          <td>
+            <div class="rank-nombre">${r.promotor}</div>
+            <div class="rank-dist">${r.distribuidor}</div>
+          </td>
+          <td>
+            <div class="score-bar-wrap">
+              <div class="score-bar"><div class="score-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+              <div class="score-val" style="color:${color}">${pct}%</div>
+            </div>
+          </td>
+          <td><div class="bloque-chips">${chips}</div></td>
+          <td><div class="pdvs-count">${r.pdvs} PDVs</div></td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>`;
+
+  document.getElementById('rankingContainer').innerHTML = html;
+}
+
+// =============================================
+// TABS
+// =============================================
+function cambiarTab(nombre, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(`panel-${nombre}`).classList.add('active');
+  if (nombre === 'ranking') renderRanking();
+}
+
+// =============================================
+// CSV PARSER
+// =============================================
+function parseCSV(txt) {
+  const lines = txt.split('\n');
+  if (!lines.length) return [];
+  const headers = parseCSVLine(lines[0]);
+  return lines.slice(1).filter(l => l.trim()).map(l => {
+    const vals = parseCSVLine(l);
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = vals[i] || '');
+    return obj;
+  });
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '';
+  let inQuote = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      if (inQuote && line[i+1] === '"') { cur += '"'; i++; }
+      else inQuote = !inQuote;
+    } else if (c === ',' && !inQuote) {
+      result.push(cur.trim()); cur = '';
+    } else {
+      cur += c;
+    }
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+// =============================================
+// INIT
+// =============================================
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') cerrarModal();
+});
+
+cargarConfig();
+// Auto-cargar si hay config
+setTimeout(() => {
+  if (fotoItems.length === 0) cargarDatos();
+}, 300);
+</script>
+</body>
+</html>
