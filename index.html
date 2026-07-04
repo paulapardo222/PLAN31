@@ -958,16 +958,30 @@ function construirFotos() {
   fotoItems = [];
   const seen = new Set();
 
-  rawRows.forEach(row => {
-    const submissionId = row['Submission ID'] || '';
-    const promotor = (row['NOMBRE Y APELLIDO:'] || '').trim();
-    const distribuidor = row['DISTRIBUIDOR:'] || '';
-    const tipoNegocio = (row['QUE TIPO DE NEGOCIO ES:'] || '').toUpperCase();
-    const canal = tipoNegocio.includes('AUTO') || tipoNegocio.includes('AS') ? 'AS' : 'K+T';
-    const codigoB2B = row['CODIGO B2B DEL PDV:'] || '';
+  // Mapeo por posición de columna (0-indexed)
+  const FOTO_COLS = {
+    26: { bloque: 'FRIO CMQ',          canal: 'K+T', variable: 'Frío CMQ' },
+    30: { bloque: 'FRIO BLANCO',        canal: 'K+T', variable: 'Frío Blanco' },
+    36: { bloque: 'EXHIB. ADICIONALES', canal: 'K+T', variable: 'Exhibiciones Adicionales' },
+    47: { bloque: 'FRIO CMQ',           canal: 'AS',  variable: 'Frío CMQ' },
+    51: { bloque: 'FRIO BLANCO',        canal: 'AS',  variable: 'Frío Blanco' },
+    57: { bloque: 'EXHIB. ADICIONALES', canal: 'AS',  variable: 'Exhibiciones Adicionales' },
+    62: { bloque: 'GONDOLA',            canal: 'AS',  variable: 'Góndola' },
+    65: { bloque: 'GONDOLA',            canal: 'AS',  variable: 'Puntera' },
+  };
 
-    Object.keys(row).forEach(col => {
-      const val = (row[col] || '').toString();
+  rawRows.forEach(row => {
+    const cols = Object.values(row);
+    const submissionId = row['Submission ID'] || cols[0] || '';
+    const promotor = (cols[14] || '').trim();
+    const distribuidor = (cols[3] || '').trim();
+    const codigoB2B = (cols[15] || '').trim();
+    const tipoNegocio = (cols[16] || '').trim().toUpperCase();
+    const canalRow = tipoNegocio === 'AS' ? 'AS' : 'K+T';
+
+    Object.entries(FOTO_COLS).forEach(([posStr, info]) => {
+      const pos = parseInt(posStr);
+      const val = (cols[pos] || '').toString();
       const urls = [
         ...(val.match(/https?:\/\/storage\.tally\.so[^\s,"]*/gi) || []),
         ...(val.match(/https?:\/\/[^\s,"]*\.(jpg|jpeg|png|webp)(\?[^\s,"]*)?/gi) || [])
@@ -976,24 +990,13 @@ function construirFotos() {
       urls.forEach(fotoUrl => {
         if (seen.has(fotoUrl)) return;
         seen.add(fotoUrl);
-
-        const colUp = col.toUpperCase();
-        let bloque = 'SIN CLASIFICAR';
-        let variable = col.substring(0, 60);
-
-        if (colUp.includes('EDF') || colUp.includes('PRIMERA POSICI') || colUp.includes('PLANOGRAMA') || colUp.includes('SUPERCLASICO') || colUp.includes('CHAMPION') || colUp.includes('MICHELOB')) {
-          bloque = 'FRIO CMQ';
-        } else if (colUp.includes('VALUE') || colUp.includes('H2OH') || colUp.includes('SABORIZAD')) {
-          bloque = 'FRIO BLANCO';
-        } else if (colUp.includes('EXTERNO') || colUp.includes('AFICHE')) {
-          bloque = 'ZONA EXTERNA';
-        } else if (colUp.includes('ADICIONAL') || colUp.includes('COMBO') || colUp.includes('PRECIFICAD')) {
-          bloque = 'EXHIB. ADICIONALES';
-        } else if (colUp.includes('GONDOLA') || colUp.includes('FACING') || colUp.includes('CENEFA') || colUp.includes('PTC')) {
-          bloque = 'GONDOLA';
-        }
-
-        fotoItems.push({ submissionId, promotor, distribuidor, canal, codigoB2B, bloque, variable, respuestaPromotor: 'SI', fotoUrl, colOrigen: col });
+        // Solo mostrar fotos del canal que corresponde al row
+        if (info.canal !== canalRow) return;
+        fotoItems.push({
+          submissionId, promotor, distribuidor, canal: canalRow,
+          codigoB2B, bloque: info.bloque, variable: info.variable,
+          respuestaPromotor: 'SI', fotoUrl
+        });
       });
     });
   });
