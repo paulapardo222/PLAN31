@@ -958,41 +958,50 @@ function construirFotos() {
   fotoItems = [];
   const seen = new Set();
 
-  // Mapeo por posición de columna (0-indexed)
-  const FOTO_COLS = {
-    26: { bloque: 'FRIO CMQ',          canal: 'K+T', variable: 'Frío CMQ' },
-    30: { bloque: 'FRIO BLANCO',        canal: 'K+T', variable: 'Frío Blanco' },
-    36: { bloque: 'EXHIB. ADICIONALES', canal: 'K+T', variable: 'Exhibiciones Adicionales' },
-    47: { bloque: 'FRIO CMQ',           canal: 'AS',  variable: 'Frío CMQ' },
-    51: { bloque: 'FRIO BLANCO',        canal: 'AS',  variable: 'Frío Blanco' },
-    57: { bloque: 'EXHIB. ADICIONALES', canal: 'AS',  variable: 'Exhibiciones Adicionales' },
-    62: { bloque: 'GONDOLA',            canal: 'AS',  variable: 'Góndola' },
-    65: { bloque: 'GONDOLA',            canal: 'AS',  variable: 'Puntera' },
+  const TITULO_BLOQUE = {
+    "fotos bloque frio": { bloque: "FRIO CMQ", variable: "Frio CMQ" },
+    "fotos frio blanco": { bloque: "FRIO BLANCO", variable: "Frio Blanco" },
+    "fotos exhibiciones": { bloque: "EXHIB. ADICIONALES", variable: "Exhibiciones Adicionales" },
+    "fotos gondola": { bloque: "GONDOLA", variable: "Gondola" },
+    "fotos puntera": { bloque: "GONDOLA", variable: "Puntera" },
   };
 
   rawRows.forEach(row => {
     const cols = Object.values(row);
-    const submissionId = row['Submission ID'] || cols[0] || '';
-    const promotor = (cols[14] || '').trim();
-    const distribuidor = (cols[3] || '').trim();
-    const codigoB2B = (cols[15] || '').trim();
-    const tipoNegocio = (cols[16] || '').trim().toUpperCase();
-    const canalRow = tipoNegocio === 'AS' ? 'AS' : 'K+T';
+    const headers = Object.keys(row);
+    const submissionId = row["Submission ID"] || cols[0] || "";
+    const promotor = (cols[14] || "").trim();
+    const distribuidor = (cols[3] || "").trim();
+    const codigoB2B = (cols[15] || "").trim();
+    const tipoNegocio = (cols[16] || "").trim().toUpperCase();
+    const canalRow = tipoNegocio === "AS" ? "AS" : "K+T";
 
-    Object.entries(FOTO_COLS).forEach(([posStr, info]) => {
-      const pos = parseInt(posStr);
-      const val = (cols[pos] || '').toString();
+    headers.forEach((header, idx) => {
+      const headerLower = (header || "").toLowerCase().trim();
+      const val = (cols[idx] || "").toString();
+      if (!val.includes("http")) return;
+
       const urls = val.split(/[\n\r]+/).map(s => s.trim()).filter(s => s.startsWith("http"));
+      if (!urls.length) return;
+
+      let bloque = "SIN CLASIFICAR";
+      let variable = header.substring(0, 50);
+
+      for (const [key, info] of Object.entries(TITULO_BLOQUE)) {
+        if (headerLower.includes(key)) {
+          bloque = info.bloque;
+          variable = info.variable;
+          break;
+        }
+      }
 
       urls.forEach(fotoUrl => {
         if (seen.has(fotoUrl)) return;
         seen.add(fotoUrl);
-        // Solo mostrar fotos del canal que corresponde al row
-        if (info.canal !== canalRow) return;
         fotoItems.push({
           submissionId, promotor, distribuidor, canal: canalRow,
-          codigoB2B, bloque: info.bloque, variable: info.variable,
-          respuestaPromotor: 'SI', fotoUrl
+          codigoB2B, bloque, variable,
+          respuestaPromotor: "SI", fotoUrl
         });
       });
     });
