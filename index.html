@@ -903,7 +903,7 @@ const PESOS = {
 };
 
 let rawRows = [], fotoItems = [], validaciones = {}, modalItem = null;
-const SHEET_ID_TALLY = "1hOrbUasWCLWYWcTpyM6-szBl5rBzWiZo5VDk4uN_tw0";
+const TALLY_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTW7MRJRs3sye2HYhSfx2kK7fksHHsvFjqGqAH_ebRIIlHGqfnlYo4ZgnYsqAyUjdjuNTqoA6-SnfSK/pub?gid=0&single=true&output=csv";
 
 function guardarConfig() {
   localStorage.setItem('p31_webapp', document.getElementById('cfgWebApp').value);
@@ -936,7 +936,7 @@ async function cargarDatos() {
 }
 
 async function cargarTally() {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID_TALLY}/export?format=csv&gid=0`;
+  const url = TALLY_CSV_URL;
   const resp = await fetch(url);
   const txt = await resp.text();
   rawRows = parseCSV(txt);
