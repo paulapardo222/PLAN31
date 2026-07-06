@@ -923,14 +923,16 @@ function setStatus(txt, tipo) {
 async function cargarDatos() {
   setStatus('Cargando...', 'cargando');
   try {
-    await Promise.all([cargarTally(), cargarValidaciones()]);
-    construirFotos();
-    filtrar();
-    setStatus('Actualizado ✓', 'ok');
+    await cargarTally();
   } catch(e) {
-    setStatus('Error de conexión', 'error');
+    setStatus('Error cargando datos', 'error');
     console.error(e);
+    return;
   }
+  try { await cargarValidaciones(); } catch(e) { console.warn('Sin validaciones', e); }
+  construirFotos();
+  filtrar();
+  setStatus('Actualizado ✓', 'ok');
 }
 
 async function cargarTally() {
