@@ -982,10 +982,7 @@ function construirFotos() {
     Object.entries(FOTO_COLS).forEach(([posStr, info]) => {
       const pos = parseInt(posStr);
       const val = (cols[pos] || '').toString();
-      const urls = [
-        ...(val.match(/https?:\/\/storage\.tally\.so[^\s,"]*/gi) || []),
-        ...(val.match(/https?:\/\/[^\s,"]*\.(jpg|jpeg|png|webp)(\?[^\s,"]*)?/gi) || [])
-      ];
+      const urls = val.split(/[\n\r]+/).map(s => s.trim()).filter(s => s.startsWith("http"));
 
       urls.forEach(fotoUrl => {
         if (seen.has(fotoUrl)) return;
