@@ -1263,30 +1263,48 @@ function cambiarTab(nombre, el) {
 }
 
 function parseCSV(txt) {
-  const lines = txt.split('\n');
-  if (!lines.length) return [];
-  const headers = parseCSVLine(lines[0]);
-  return lines.slice(1).filter(l => l.trim()).map(l => {
-    const vals = parseCSVLine(l);
-    const obj = {};
-    headers.forEach((h, i) => obj[h] = vals[i] || '');
-    return obj;
-  });
-}
-
-function parseCSVLine(line) {
-  const result = [];
-  let cur = '', inQuote = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (c === '"') {
-      if (inQuote && line[i+1] === '"') { cur += '"'; i++; }
-      else inQuote = !inQuote;
-    } else if (c === ',' && !inQuote) { result.push(cur.trim()); cur = ''; }
-    else cur += c;
+  const rows = [];
+  let headers = null;
+  let i = 0;
+  
+  function parseRow() {
+    const fields = [];
+    while (i < txt.length) {
+      let field = '';
+      if (txt[i] === '"') {
+        i++; // skip opening quote
+        while (i < txt.length) {
+          if (txt[i] === '"') {
+            if (txt[i+1] === '"') { field += '"'; i += 2; }
+            else { i++; break; } // closing quote
+          } else {
+            field += txt[i++];
+          }
+        }
+      } else {
+        while (i < txt.length && txt[i] !== ',' && txt[i] !== '\n' && txt[i] !== '\r') {
+          field += txt[i++];
+        }
+      }
+      fields.push(field.trim());
+      if (i >= txt.length || txt[i] === '\n' || txt[i] === '\r') {
+        while (i < txt.length && (txt[i] === '\n' || txt[i] === '\r')) i++;
+        break;
+      }
+      if (txt[i] === ',') i++;
+    }
+    return fields;
   }
-  result.push(cur.trim());
-  return result;
+
+  while (i < txt.length) {
+    const row = parseRow();
+    if (!row.length || (row.length === 1 && !row[0])) continue;
+    if (!headers) { headers = row; continue; }
+    const obj = {};
+    headers.forEach((h, idx) => obj[h] = row[idx] || '');
+    rows.push(obj);
+  }
+  return rows;
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
