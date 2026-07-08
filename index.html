@@ -857,12 +857,12 @@ function validar(idx, resultado, evt) {
   const item = items[idx];
   if (!item) return;
   const previa = getValidacion(item) || {};
-  guardarValidacionLocal(item.photo_id, {
+  guardarValidacionLocal(item.photo_id, Object.assign({
     estado: resultado,
     validado_por: usuario,
     fecha_validacion: new Date().toISOString(),
     observacion: previa.observacion || ''
-  });
+  }, contextoFoto(item)));
   filtrar();
   renderRanking();
 }
@@ -873,12 +873,12 @@ function actualizarObservacion(idx, texto, evt) {
   const item = items[idx];
   if (!item) return;
   const previa = getValidacion(item) || {};
-  guardarValidacionLocal(item.photo_id, {
+  guardarValidacionLocal(item.photo_id, Object.assign({
     estado: previa.estado || 'PENDIENTE',
     validado_por: previa.validado_por || '',
     fecha_validacion: previa.fecha_validacion || '',
     observacion: texto
-  });
+  }, contextoFoto(item)));
 }
 
 function abrirModal(idx) {
@@ -897,6 +897,17 @@ function abrirModal(idx) {
 function cerrarModal(evt) { if (evt && evt.target !== document.getElementById('modal') && !evt.target.classList.contains('modal-close')) return; document.getElementById('modal').classList.remove('open'); modalItem = null; }
 function validarDesdeModal(resultado) { if (!modalItem) return; validar(modalItem.idx, resultado); cerrarModal(); }
 function actualizarObservacionModal(texto) { if (!modalItem) return; actualizarObservacion(modalItem.idx, texto); }
+
+function contextoFoto(item) {
+  return {
+    promotor: item.promotor || '',
+    distribuidor: item.distribuidor || '',
+    canal: item.canal || '',
+    pdv: item.codigo_b2b || '',
+    bloque: item.bloque_label || '',
+    foto_url: item.foto_url || ''
+  };
+}
 
 function guardarValidacionLocal(photo_id, data) {
   validaciones[photo_id] = data;
